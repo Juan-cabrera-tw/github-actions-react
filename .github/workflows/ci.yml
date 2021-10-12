@@ -67,3 +67,7 @@ jobs:
         run: npx codecov
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - name: Open issue
+        if: failure() && github.event_name == 'pull_request'
+        run: |
+          curl --request POST \ --url http://api.github.com/repos/${{ github.repositoy }}/issues \ --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \ --header 'Content-type: application/json' \ --data '{"title": "automated issue for commit: ${{ github.sha }}", "body": "this issue was automatically created by the github action workflow **${{ github.workflow }}**. \n\n The commit hash was: _${{ github.sha }}_.", "assignees": ["${{github.event_pull_request.user.login}}"]}'
