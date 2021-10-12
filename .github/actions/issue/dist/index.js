@@ -10609,19 +10609,32 @@
     const core = __nccwpck_require__(2186);
     const github = __nccwpck_require__(5438);
 
-    try {
-      // throw new Error("some error message");
-      const name = core.getInput("who-to-greet");
-      console.log(`Hello ${name}`);
-      console.log("new");
+    async function run() {
+      try {
+        // throw new Error("some error message");
+        const token = core.getInput("token");
+        const title = core.getInput("title");
+        const body = core.getInput("body");
+        const assignees = core.getInput("assignees");
 
-      const time = new Date();
-      core.setOutput("time", time.toTimeString());
+        const octokit = new github.GitHub(token);
 
-      console.log(JSON.stringify(github, null, "\t"));
-    } catch (error) {
-      core.setFailed(error.message);
+        const response = await octokit.issues.create({
+          // owner: github.context.repo.owner,
+          // repo: github.context.repo.repo,
+          ...github.context.repo,
+          title,
+          body,
+          assignees: assignees ? assignees.split("\n") : undefined,
+        });
+
+        core.setOutput("issue", JSON.stringify(response.data));
+      } catch (error) {
+        core.setFailed(error.message);
+      }
     }
+
+    run();
   })();
 
   module.exports = __webpack_exports__;
