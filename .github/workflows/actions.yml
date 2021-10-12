@@ -21,3 +21,9 @@ jobs:
           who-to-greet: "World"
       - run: |
           echo "Time: ${{ steps.hello.outputs.time }}"
+      - uses: ./.github/actions/hello-docker
+        id: Hello
+        with:
+          who-to-greet: "World"
+      - run: |
+          echo "Time: ${{ steps.hello.outputs.time }}"
